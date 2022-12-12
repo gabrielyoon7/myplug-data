@@ -15,5 +15,8 @@
     "colors": "^1.4.0",
     "input": "^1.0.1",
     "mongoose": "^6.5.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.29.0"
   }
 }
