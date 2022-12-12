@@ -1,19 +1,21 @@
-import mongoose from "mongoose";
+import { generateTimeObject } from "./utils/time.js";
 
 export default class DataManager {
-    count = 0;
+    #count = 0;
+    #time=null;
     constructor() {
         console.log('Data Manager 시작')
-        this.connectMongoose();
     }
-    async connectMongoose() {
-        //  Mongoose Connection (여기서만 해주면 전역 설정 됨 / 1회)
-        await mongoose
-            .connect(`mongodb://localhost:27017/myplug`, {})
-            .then(() => console.log('MongoDB Connected!!'))
-            .catch(err => console.log(err));
+    async init() {
+        while (true) {
+            this.#count++;
+            console.log(this.#count);
+            this.#time=generateTimeObject();
+            await this.delay(10 * 60).then(() => console.log('대기 끝')); //대기시간 n*60초
+        }
     }
-    run(){
-        let a=0
+    delay(seconds) {
+        return new Promise(resolve => setTimeout(resolve, seconds * 30));
     }
+
 }
