@@ -12,10 +12,11 @@ export default class DataManager {
 
   async init() {
     while (true) {
-      this.#count++;
+      this.#count += 1;
       console.log(this.#count);
       this.#time = generateTimeObject();
       const receiver = new Receiver(this.#time);
+      receiver.init();
       await this.delay(10 * 60).then(() => console.log('대기 끝')); // 대기시간 n*60초
     }
   }
