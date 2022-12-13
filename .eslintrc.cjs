@@ -17,5 +17,8 @@ module.exports = {
     'no-new': 0,
     'max-depth': ['error', 2],
     'max-lines-per-function': ['error', 10],
+    'import/extensions': [
+      'off',
+    ],
   },
 };
