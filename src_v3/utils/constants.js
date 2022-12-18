@@ -1,7 +1,7 @@
 /**
  * 전국 지역 코드
  */
-const zcodes = [
+const ZCODES = [
   { code: 11, region: '서울특별시' },
   { code: 26, region: '부산광역시' },
   { code: 27, region: '대구광역시' },
@@ -20,4 +20,4 @@ const zcodes = [
   { code: 50, region: '제주도' },
 ];
 
-export { zcodes };
+export { ZCODES };

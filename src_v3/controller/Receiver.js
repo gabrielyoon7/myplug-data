@@ -1,9 +1,11 @@
+/* eslint-disable no-await-in-loop */
 import API from '../utils/API.js';
-import { zcodes } from '../utils/constants.js';
+import { ZCODES } from '../utils/constants.js';
 
 export default class Receiver {
   // 전국 지역 코드
-  #zcodes = zcodes;
+  #ZCODES = ZCODES;
+
   #statusManager = null;
 
   constructor(statusManager) {
@@ -12,10 +14,10 @@ export default class Receiver {
 
   async init() {
     // 순서를 지켜주기 위해 Promise.all을 사용했으며, 이후에 등장하는 함수를 iterable하게 적용함
-    await Promise.all(this.#zcodes.map((z) => this.getChargerInfoByZcode(z, this.#statusManager.getTime())));
+    await Promise.all(this.#ZCODES.map((z) => this.getChargerInfoByZcode(z)));
   }
 
-  async getChargerInfoByZcode(z, time) {
+  async getChargerInfoByZcode(z) {
     // console.log(z.code, z.region);
     let totalCount = 10000; // 실행 시 업데이트 되는 부분... 최초 실행 시 업데이트 되며, 전체 갯수를 의미함.
     const numOfRows = 9999; // 한번에 최대 몇개 데이터를 처리할건지 결정하는 부분. (max : 9999)

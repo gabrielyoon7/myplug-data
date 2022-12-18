@@ -1,9 +1,11 @@
+/* eslint-disable no-promise-executor-return */
+/* eslint-disable no-await-in-loop */
 import Receiver from './controller/Receiver.js';
 import StatusManager from './utils/StatusManager.js';
 
 export default class DataManager {
-
   #count = 0;
+
   #statusManager = null;
 
   constructor() {

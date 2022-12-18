@@ -1,23 +1,23 @@
-import { generateTimeObject } from "./time.js";
+import { generateTimeObject } from './time.js';
 
 export default class StatusManager {
+  #time = null;
 
-    #time = null;
-    #statusList = [];
+  #statusList = [];
 
-    constructor() {
-        this.#time = generateTimeObject();
-    }
+  constructor() {
+    this.#time = generateTimeObject();
+  }
 
-    addStatus(stat) {
-        this.#statusList.push(stat);
-    }
+  addStatus(stat) {
+    this.#statusList.push(stat);
+  }
 
-    getStatus() {
-        return this.#statusList;
-    }
+  getStatus() {
+    return this.#statusList;
+  }
 
-    getTime() {
-        return this.#time;
-    }
+  getTime() {
+    return this.#time;
+  }
 }
