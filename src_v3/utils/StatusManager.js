@@ -1,3 +1,4 @@
+import { NUM_OF_ROWS } from './constants.js';
 import { generateTimeObject } from './time.js';
 
 export default class StatusManager {
@@ -9,8 +10,11 @@ export default class StatusManager {
     this.#time = generateTimeObject();
   }
 
-  addStatus(stat) {
-    this.#statusList.push(stat);
+  addStatus(region, currentPage, maxPage, totalCount) {
+    this.#statusList.push({
+      description: '수신완료', region, currentPage, maxPage, totalCount,
+    });
+    this.print();
   }
 
   getStatus() {
@@ -19,5 +23,10 @@ export default class StatusManager {
 
   getTime() {
     return this.#time;
+  }
+
+  print() {
+    console.clear();
+    this.#statusList.forEach((stat) => console.log(`[${stat.description}] [${stat.region} ${stat.currentPage}/${stat.maxPage}] | count [${(stat.currentPage * NUM_OF_ROWS > stat.totalCount ? stat.totalCount : stat.currentPage * NUM_OF_ROWS)}/${stat.totalCount}]`.yellow.bgGreen.bold));
   }
 }
