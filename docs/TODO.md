@@ -12,4 +12,7 @@
 - [x] 기준 시간 연동
 - [x] 데이터 수신
 ## Saver
-- [ ] 세이버 객체 초기화
+- [x] 세이버 객체 초기화
+    - [x] bulkWrite를 위한 upsertDoc 생성 (Station, Charger)
+    - [ ] Station과 Charger 데이터 저장
+
