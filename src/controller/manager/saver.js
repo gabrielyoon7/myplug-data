@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Station } from '../../models/Station.js';
 import { Charger } from '../../models/Charger.js';
 import * as logger from './logger.js';
