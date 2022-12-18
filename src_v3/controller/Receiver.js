@@ -4,16 +4,15 @@ import { zcodes } from '../utils/constants.js';
 export default class Receiver {
   // 전국 지역 코드
   #zcodes = zcodes;
+  #statusManager = null;
 
-  #time = null;
-
-  constructor(time) {
-    this.#time = time;
+  constructor(statusManager) {
+    this.#statusManager = statusManager;
   }
 
   async init() {
     // 순서를 지켜주기 위해 Promise.all을 사용했으며, 이후에 등장하는 함수를 iterable하게 적용함
-    await Promise.all(this.#zcodes.map((z) => this.getChargerInfoByZcode(z, this.#time)));
+    await Promise.all(this.#zcodes.map((z) => this.getChargerInfoByZcode(z, this.#statusManager.getTime())));
   }
 
   async getChargerInfoByZcode(z, time) {
@@ -25,7 +24,6 @@ export default class Receiver {
     while (true) {
       // 다음 페이지를 위해 비워주기 (한번에 여러개 저장하려면 이렇게 하면 안됨)
       const rawData = [];
-
       // 끝 페이지 도달 시 탈출
       if (page > maxPage) {
         break;
@@ -44,10 +42,10 @@ export default class Receiver {
         maxPage = parseInt(totalCount / numOfRows, 10) + 1;
         console.log(`[receiver] [${z.region} ${page}/${maxPage}] 데이터 수신 완료 | count [${(page * numOfRows > totalCount ? totalCount : page * numOfRows)}/${totalCount}]`.yellow.bgGreen.bold);
         /**
-                     * 받은 데이터를 저장하기 시작함
-                     * node.js 속도 향상을 위해 지역별이 아닌 페이지 단위로 저장 요청을 수행한다.
-                     * 이렇게 되면 1번에 최대 9999개까지만 작업해서 속도 개선이 가능함.
-                     * */
+         * 받은 데이터를 저장하기 시작함
+         * node.js 속도 향상을 위해 지역별이 아닌 페이지 단위로 저장 요청을 수행한다.
+         * 이렇게 되면 1번에 최대 9999개까지만 작업해서 속도 개선이 가능함.
+         * */
         // await saver.init(z.region, dateJSON, raw_data, `[${z.region} ${page}/${maxPage}]`);
         page += 1;
       } catch (error) {
