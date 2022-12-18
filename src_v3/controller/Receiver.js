@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import API from '../utils/API.js';
 import { NUM_OF_ROWS, ZCODES } from '../utils/constants.js';
+import Saver from './Saver.js';
 
 export default class Receiver {
   // 전국 지역 코드
@@ -47,6 +48,8 @@ export default class Receiver {
          * node.js 속도 향상을 위해 지역별이 아닌 페이지 단위로 저장 요청을 수행한다.
          * 이렇게 되면 1번에 최대 9999개까지만 작업해서 속도 개선이 가능함.
          * */
+        const saver = new Saver(this.#statusManager, z.region, page, rawData);
+        await saver.init();
         // await saver.init(z.region, dateJSON, raw_data, `[${z.region} ${page}/${maxPage}]`);
         page += 1;
       } catch (error) {
