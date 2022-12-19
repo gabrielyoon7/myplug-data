@@ -1,4 +1,4 @@
-import { chargerUpsertDoc, stationUpsertDoc } from '../utils/common';
+import { chargerUpsertDoc, stationUpsertDoc } from '../utils/common.js';
 
 export default class Saver {
   #statusManager = null;
@@ -24,7 +24,7 @@ export default class Saver {
 
   async init() {
     const { date } = this.#statusManager.getTime();
-    await rawData.forEach((raw) => {
+    await this.#rawData.forEach((raw) => {
       if (!this.#stationIdSet.has(raw.statId)) {
         this.#stationIdSet.add(raw.statId);
         this.#stations.push(stationUpsertDoc(date, raw));
