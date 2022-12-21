@@ -1,3 +1,5 @@
+import { Charger } from '../../src/models/Charger.js';
+import { Station } from '../../src/models/Station.js';
 import { chargerUpsertDoc, stationUpsertDoc } from '../utils/common.js';
 
 export default class Saver {
@@ -31,13 +33,32 @@ export default class Saver {
       }
       this.#chargers.push(chargerUpsertDoc(date, raw));
     });
+    await Promise.all([
+      this.updateStations(),
+      this.updateChargers(),
+    ]);
+    console.log('d');
   }
 
   async updateStations() {
-
+    console.log(`[saver] [Stations] ${this.#currentPage} 정보 업데이트 중 ...`.yellow);
+    await Station.bulkWrite(this.#stations).then((bulkWriteOpResult) => {
+      console.log(`[saver] [Stations] ${this.#currentPage} MongoDB BULK update OK : ${this.#stations.length}`.green);
+    }).catch((err) => {
+      console.log(`>> Stations ${this.#currentPage} BULK update error`.red);
+      console.log(JSON.stringify(err));
+    });
+    return null;
   }
 
   async updateChargers() {
-
+    console.log(`[saver] [Chargers] ${this.#currentPage} 정보 업데이트 중 ...`.yellow);
+    await Charger.bulkWrite(this.#chargers).then((bulkWriteOpResult) => {
+      console.log(`[saver] [Chargers] ${this.#currentPage} MongoDB BULK update OK : ${this.#chargers.length}`.green);
+    }).catch((err) => {
+      console.log(`>> Chargers ${this.#currentPage} BULK update error`.red);
+      console.log(JSON.stringify(err));
+    });
+    return null;
   }
 }
