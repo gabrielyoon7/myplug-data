@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { StationLogs } from "../../models/StationLogs.js";
 
 export const init = async (region, date, raw_data, page) => {

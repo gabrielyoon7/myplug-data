@@ -1,6 +1,7 @@
 import { Charger } from '../../src/models/Charger.js';
 import { Station } from '../../src/models/Station.js';
 import { chargerUpsertDoc, stationUpsertDoc } from '../utils/common.js';
+import Logger from './Logger.js';
 
 export default class Saver {
   #statusManager = null;
@@ -39,6 +40,13 @@ export default class Saver {
       this.updateChargers(),
     ]);
     this.#statusManager.updateStatus(this.#region, this.#currentPage, '저장 완료');
+    const logger = new Logger(
+      this.#statusManager,
+      this.#region,
+      this.#currentPage,
+      this.#rawData,
+    );
+    logger.init();
   }
 
   async updateStations() {
