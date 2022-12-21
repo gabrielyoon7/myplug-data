@@ -1,4 +1,4 @@
-import { NUM_OF_ROWS, STATUS_MESSAGE } from './constants.js';
+import { STATUS_MESSAGE } from './constants.js';
 import { generateTimeObject } from './time.js';
 
 export default class StatusManager {
@@ -12,8 +12,15 @@ export default class StatusManager {
 
   addStatus(region, currentPage, maxPage, currentCount, totalCount) {
     this.#statusList.push({
-      description: '수신완료', region, currentPage, maxPage, currentCount, totalCount,
+      region, currentPage, maxPage, currentCount, totalCount, description: '수신 완료',
     });
+    this.print();
+  }
+
+  updateStatus(region, currentPage, description) {
+    const con = (stat) => stat.region === region && stat.currentPage === currentPage;
+    const index = this.#statusList.findIndex((stat) => con(stat));
+    this.#statusList[index].description = description;
     this.print();
   }
 
@@ -33,6 +40,8 @@ export default class StatusManager {
       let message = `${STATUS_MESSAGE(stat)}`;
       if (stat.description.endsWith('완료')) {
         message = message.yellow.bgGreen.bold;
+      } else if (stat.description.endsWith('중')) {
+        message = message.yellow.bgYellow.bold;
       }
       console.log(message);
     });

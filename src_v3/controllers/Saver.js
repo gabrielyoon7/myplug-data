@@ -33,11 +33,12 @@ export default class Saver {
       }
       this.#chargers.push(chargerUpsertDoc(date, raw));
     });
+    this.#statusManager.updateStatus(this.#region, this.#currentPage, '저장 중');
     await Promise.all([
       this.updateStations(),
       this.updateChargers(),
     ]);
-    console.log('d');
+    this.#statusManager.updateStatus(this.#region, this.#currentPage, '저장 완료');
   }
 
   async updateStations() {
