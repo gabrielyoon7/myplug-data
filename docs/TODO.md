@@ -14,5 +14,5 @@
 ## Saver
 - [x] 세이버 객체 초기화
     - [x] bulkWrite를 위한 upsertDoc 생성 (Station, Charger)
-    - [ ] Station과 Charger 데이터 저장
+    - [x] Station과 Charger 데이터 저장
 
