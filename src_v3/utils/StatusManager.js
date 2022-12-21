@@ -28,7 +28,7 @@ export default class StatusManager {
   print() {
     console.clear();
     console.log(this.#statusList.length);
-    this.#statusList = this.#statusList.sort((a, b) => a.region - b.region);
+    this.#statusList = this.#statusList.sort((a, b) => a.region.localeCompare(b.region));
     console.log(JSON.stringify(this.#statusList));
     this.#statusList.forEach((stat) => console.log(`[${stat.description}] [${stat.region} ${stat.currentPage}/${stat.maxPage}] | count [${(stat.currentPage * NUM_OF_ROWS > stat.totalCount ? stat.totalCount : stat.currentPage * NUM_OF_ROWS)}/${stat.totalCount}]`.yellow.bgGreen.bold));
     console.log('');
