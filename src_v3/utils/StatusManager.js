@@ -1,4 +1,4 @@
-import { NUM_OF_ROWS } from './constants.js';
+import { NUM_OF_ROWS, STATUS_MESSAGE } from './constants.js';
 import { generateTimeObject } from './time.js';
 
 export default class StatusManager {
@@ -10,9 +10,9 @@ export default class StatusManager {
     this.#time = generateTimeObject();
   }
 
-  addStatus(region, currentPage, maxPage, totalCount) {
+  addStatus(region, currentPage, maxPage, currentCount, totalCount) {
     this.#statusList.push({
-      description: '수신완료', region, currentPage, maxPage, totalCount,
+      description: '수신완료', region, currentPage, maxPage, currentCount, totalCount,
     });
     this.print();
   }
@@ -27,10 +27,15 @@ export default class StatusManager {
 
   print() {
     console.clear();
-    console.log(this.#statusList.length);
-    this.#statusList = this.#statusList.sort((a, b) => a.region.localeCompare(b.region));
+    this.#statusList.sort((a, b) => a.region.localeCompare(b.region));
     console.log(JSON.stringify(this.#statusList));
-    this.#statusList.forEach((stat) => console.log(`[${stat.description}] [${stat.region} ${stat.currentPage}/${stat.maxPage}] | count [${(stat.currentPage * NUM_OF_ROWS > stat.totalCount ? stat.totalCount : stat.currentPage * NUM_OF_ROWS)}/${stat.totalCount}]`.yellow.bgGreen.bold));
+    this.#statusList.forEach((stat) => {
+      let message = `${STATUS_MESSAGE(stat)}`;
+      if (stat.description.endsWith('완료')) {
+        message = message.yellow.bgGreen.bold;
+      }
+      console.log(message);
+    });
     console.log('');
   }
 }

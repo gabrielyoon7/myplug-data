@@ -2,7 +2,7 @@
  * 전국 지역 코드
  */
 const ZCODES = [
-  // { code: 11, region: '서울' },
+  { code: 11, region: '서울' },
   // { code: 26, region: '부산' },
   // { code: 27, region: '대구' },
   // { code: 28, region: '인천' },
@@ -22,4 +22,6 @@ const ZCODES = [
 
 const NUM_OF_ROWS = 9999; // 한번에 최대 몇개 데이터를 처리할건지 결정하는 부분. (max : 9999)
 
-export { ZCODES, NUM_OF_ROWS };
+const STATUS_MESSAGE = (stat) => `[${stat.region} ${stat.currentPage}/${stat.maxPage}] : ${stat.description} `;
+
+export { ZCODES, NUM_OF_ROWS, STATUS_MESSAGE };
