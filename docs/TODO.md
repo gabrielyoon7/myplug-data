@@ -7,7 +7,7 @@
 - [x] 상태 기능
     - [x] 상태 저장 기능
     - [x] 상태 출력 기능
-    - [ ] 상태 갱신 기능
+    - [x] 상태 갱신 기능
 ## Receiver
 - [x] 기준 시간 연동
 - [x] 데이터 수신
@@ -16,3 +16,8 @@
     - [x] bulkWrite를 위한 upsertDoc 생성 (Station, Charger)
     - [x] Station과 Charger 데이터 저장
 
+## Logger
+- [x] 로그 객체 초기화
+    - [ ] 로그 정제
+    - [ ] 로그 저장
+    
