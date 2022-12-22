@@ -22,6 +22,42 @@ const ZCODES = [
 
 const NUM_OF_ROWS = 9999; // 한번에 최대 몇개 데이터를 처리할건지 결정하는 부분. (max : 9999)
 
-const STATUS_MESSAGE = (stat) => `[${stat.region} ${stat.currentPage}/${stat.maxPage}] : ${stat.description} `;
+const statusConverter = (type, status) => {
+  switch (type) {
+    case 'receiver':
+      if (status) {
+        return '수신완료'.yellow.bgGreen.bold;
+      }
+      return '수신중'.yellow.bgYellow.bold;
+    case 'saver':
+      if (status) {
+        return '저장완료'.yellow.bgGreen.bold;
+      }
+      return '저장중'.yellow.bgYellow.bold;
+    case 'logger':
+      if (status) {
+        return '로깅완료'.yellow.bgGreen.bold;
+      }
+      return '로깅중'.yellow.bgYellow.bold;
+    default:
+      return 'error';
+  }
+};
+
+const statusView = (stat) => {
+  let text = '';
+  if (stat.receiver !== null) {
+    text += statusConverter('receiver', stat.receiver);
+  }
+  if (stat.saver !== null) {
+    text += ` → ${statusConverter('saver', stat.saver)}`;
+  }
+  if (stat.logger !== null) {
+    text += ` → ${statusConverter('logger', stat.logger)}`;
+  }
+  return text;
+};
+
+const STATUS_MESSAGE = (stat) => `[${stat.region} ${stat.currentPage}/${stat.maxPage}] : ${statusView(stat)}`;
 
 export { ZCODES, NUM_OF_ROWS, STATUS_MESSAGE };

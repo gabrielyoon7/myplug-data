@@ -34,12 +34,14 @@ export default class Saver {
       }
       this.#chargers.push(chargerUpsertDoc(date, raw));
     });
-    this.#statusManager.updateStatus(this.#region, this.#currentPage, '저장 중');
+    // this.#statusManager.updateStatus(this.#region, this.#currentPage, '저장 중');
+    this.#statusManager.updateStatus(this.#region, this.#currentPage, 'saver', false);
     await Promise.all([
       this.updateStations(),
       this.updateChargers(),
     ]);
-    this.#statusManager.updateStatus(this.#region, this.#currentPage, '저장 완료');
+    // this.#statusManager.updateStatus(this.#region, this.#currentPage, '저장 완료');
+    this.#statusManager.updateStatus(this.#region, this.#currentPage, 'saver', true);
     const logger = new Logger(
       this.#statusManager,
       this.#region,
