@@ -1,5 +1,5 @@
-import { Charger } from '../../src/models/Charger.js';
-import { Station } from '../../src/models/Station.js';
+import { Charger } from '../models/Charger.js';
+import { Station } from '../models/Station.js';
 import { chargerUpsertDoc, stationUpsertDoc } from '../utils/common.js';
 import Logger from './Logger.js';
 

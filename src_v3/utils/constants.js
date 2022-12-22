@@ -2,7 +2,7 @@
  * 전국 지역 코드
  */
 const ZCODES = [
-  { code: 11, region: '서울' },
+  // { code: 11, region: '서울' },
   // { code: 26, region: '부산' },
   // { code: 27, region: '대구' },
   // { code: 28, region: '인천' },

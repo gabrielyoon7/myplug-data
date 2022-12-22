@@ -117,6 +117,7 @@ const addDefaultLogs = async (page, logs) => {
     }).catch(err => {
         console.log('>> Logs [신규 충전소 기본 로그 추가] ' + page + ' BULK update error');
         console.log(JSON.stringify(err));
+        console.log(err);
     });
     return null;
 }
