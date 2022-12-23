@@ -1,5 +1,5 @@
 import { StationLogs } from '../models/StationLogs.js';
-import { insertDefaultLog, updateUsingLog } from '../utils/common.js';
+import { insertDefaultLogDoc, updateUsingLogDoc } from '../utils/common.js';
 
 export default class Logger {
   #statusManager = null;
