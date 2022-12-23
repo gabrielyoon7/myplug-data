@@ -16,8 +16,6 @@ export default class Saver {
 
   #chargers = [];
 
-  #stationIdSet = new Set();
-
   constructor(statusManager, region, currentPage, rawData) {
     this.#statusManager = statusManager;
     this.#region = region;
@@ -26,22 +24,17 @@ export default class Saver {
   }
 
   async init() {
-    const { date } = this.#statusManager.getTime();
-    await this.#rawData.forEach((raw) => {
-      if (!this.#stationIdSet.has(raw.statId)) {
-        this.#stationIdSet.add(raw.statId);
-        this.#stations.push(stationUpsertDoc(date, raw));
-      }
-      this.#chargers.push(chargerUpsertDoc(date, raw));
-    });
-    // this.#statusManager.updateStatus(this.#region, this.#currentPage, '저장 중');
+    await this.generateDocs();
     this.#statusManager.updateStatus(this.#region, this.#currentPage, 'saver', false);
     await Promise.all([
       this.updateStations(),
       this.updateChargers(),
     ]);
-    // this.#statusManager.updateStatus(this.#region, this.#currentPage, '저장 완료');
     this.#statusManager.updateStatus(this.#region, this.#currentPage, 'saver', true);
+    this.executeLogger();
+  }
+
+  async executeLogger() {
     const logger = new Logger(
       this.#statusManager,
       this.#region,
@@ -49,6 +42,18 @@ export default class Saver {
       this.#rawData,
     );
     logger.init();
+  }
+
+  async generateDocs() {
+    const { date } = this.#statusManager.getTime();
+    const stationIdSet = new Set();
+    await this.#rawData.forEach((raw) => {
+      if (!stationIdSet.has(raw.statId)) {
+        stationIdSet.add(raw.statId);
+        this.#stations.push(stationUpsertDoc(date, raw));
+      }
+      this.#chargers.push(chargerUpsertDoc(date, raw));
+    });
   }
 
   async updateStations() {
