@@ -23,6 +23,12 @@ export default class Logger {
 
   async init() {
     this.#statusManager.updateStatus(this.#region, this.#currentPage, 'logger', false);
+    await this.insertNewLogs();
+    await this.updateUsingLogs();
+    this.#statusManager.updateStatus(this.#region, this.#currentPage, 'logger', true);
+  }
+
+  async insertNewLogs() {
     const date = this.#statusManager.getTime();
     // console.log(`${date.week}${this.#rawData[0].statId}${this.#rawData[0].chgerId}`);
     const logs = await StationLogs.find({
@@ -52,7 +58,10 @@ export default class Logger {
       console.log(JSON.stringify(err));
       console.log(err);
     });
-    // this.#usingBulkDocs = [];
+  }
+
+  async updateUsingLogs() {
+    const date = this.#statusManager.getTime();
     this.#rawData.filter((data) => data.stat === '3').forEach((raw) => {
       const logId = `${date.week}${raw.statId}${raw.chgerId}`;
       this.#usingBulkDocs.push(
@@ -66,6 +75,5 @@ export default class Logger {
       console.log(`>> Logs [사용중인 충전소 로그 업데이트] ${this.#region + this.#currentPage} BULK update error`);
       console.log(JSON.stringify(err));
     });
-    this.#statusManager.updateStatus(this.#region, this.#currentPage, 'logger', true);
   }
 }
