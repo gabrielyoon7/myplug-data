@@ -46,9 +46,9 @@ export default class Logger {
   }
 
   async init() {
-    const date = this.#statusManager.getTime();
     this.#statusManager.updateStatus(this.#region, this.#currentPage, 'logger', false);
-    console.log(`${this.#region} ${this.#currentPage} 로거 시작`);
+    const date = this.#statusManager.getTime();
+    // console.log(`${date.week}${this.#rawData[0].statId}${this.#rawData[0].chgerId}`);
     const logs = await StationLogs.find({
       $and: [
         { week: { $eq: date.week } },
@@ -56,50 +56,57 @@ export default class Logger {
         { statId: { $in: this.#rawData.map((data) => data.statId) } },
       ],
     }, '_id');
-    console.log(`[logger] ${this.#currentPage} raw data size : ${this.#rawData.length}`);
-    console.log(`[logger] ${this.#currentPage} prev logs size : ${logs.length}`);
+    console.log(`[logger] ${this.#region + this.#currentPage} prev logs size : ${logs.length}`);
+    console.log(`[logger] ${this.#region + this.#currentPage} raw size : ${this.#rawData.length}`);
     this.#rawData.forEach((raw) => {
+      const newId = `${date.week}${raw.statId}${raw.chgerId}`;
       // eslint-disable-next-line no-underscore-dangle
-      const index = logs.findIndex((item) => (item._id === `${date.week}${raw.statId}${raw.chgerId}`));
+      const index = logs.findIndex((item) => (item._id === newId));
       if (index === -1) {
-        this.#logsForBulk.push(this.addDefaultLogJSON(this.#region, date, raw));
+        this.#logsForBulk.push(this.addDefaultLogJSON(newId, raw));
       }
     });
-    console.log(`[logger] ${this.#currentPage} next logs size : ${this.#logsForBulk.length}`);
-
-    // 신규 충전기에 대한 기본 로그 데이터를 추가해준다.
-    await this.addDefaultLogs();
-
-    // 사용중인 충전기들은 요일/시간별로 로그를 업데이트 해준다.
-    this.#logsForBulk = [];
-    // const tt = this.#rawData.filter((data) => data.stat === '3')[0];
-    // console.log(`TTTT : ${JSON.stringify(this.addStat3LogJSON(date, `${date.week}${tt.statId}${tt.chgerId}`))}`); // test
-    this.#rawData.filter((data) => data.stat === '3').forEach((data) => {
-      this.#logsForBulk.push(this.addStat3LogJSON(date, `${date.week}${data.statId}${data.chgerId}`));
+    console.log(`[logger] ${this.#region + this.#currentPage} next logs size : ${this.#logsForBulk.length}`);
+    await StationLogs.bulkWrite(this.#logsForBulk).then((bulkWriteOpResult) => {
+      console.log(`[logger] [신규 충전소 기본 로그 추가] ${this.#region + this.#currentPage} MongoDB BULK update OK : ${this.#logsForBulk.length}`.green);
+    }).catch((err) => {
+      console.log(`>> Logs [신규 충전소 기본 로그 추가] ${this.#region + this.#currentPage} BULK update error`);
+      console.log(JSON.stringify(err));
+      console.log(err);
     });
-    console.log(`${this.#currentPage} 사용중인 충전기 수 : ${this.#logsForBulk.length}`);
-    await this.updateStat3Logs();
+    this.#logsForBulk = [];
+    this.#rawData.filter((data) => data.stat === '3').forEach((raw) => {
+      const logId = `${date.week}${raw.statId}${raw.chgerId}`;
+      this.#logsForBulk.push(this.addStat3LogJSON(logId));
+    });
+    console.log(`${this.#region + this.#currentPage} 사용중인 충전기 수 : ${this.#logsForBulk.length}`);
+    await StationLogs.bulkWrite(this.#logsForBulk).then((bulkWriteOpResult) => {
+      console.log(`[logger] [사용중인 충전소 로그 업데이트] ${this.#region + this.#currentPage} MongoDB BULK update OK : ${this.#logsForBulk.length}`.green);
+    }).catch((err) => {
+      console.log(`>> Logs [사용중인 충전소 로그 업데이트] ${this.#region + this.#currentPage} BULK update error`);
+      console.log(JSON.stringify(err));
+    });
     this.#statusManager.updateStatus(this.#region, this.#currentPage, 'logger', true);
   }
 
   /**
  * 사용중인 충전기 업데이트
- * @param {*} date
  * @param {*} logId
  * @returns
  */
-  addStat3LogJSON(date, logId) {
+  addStat3LogJSON(logId) {
   // https://github.com/Automattic/mongoose/issues/9268 여기 참고해서 다시 도전해보기 --> 해결
   // console.log(logId);
-    const { day } = date;
-    const { hour } = date;
+    const { day } = this.#statusManager.getTime();
+    const { hour } = this.#statusManager.getTime();
+    const { week } = this.#statusManager.getTime();
     const temp = `logs.${day}.${hour}`;
     const doc = {
       updateOne: {
         filter: {
           $and: [
             { _id: { $eq: logId } },
-            { week: { $eq: date.week } },
+            { week: { $eq: week } },
           ],
         },
         update: {
@@ -114,21 +121,19 @@ export default class Logger {
 
   /**
 * 처음 발견한 충전기에 대한 기본 로그 추가
-* @param {*} region
-* @param {*} date
+* @param {*} newId
 * @param {*} raw
 * @returns
 */
-  addDefaultLogJSON(region, date, raw) {
+  addDefaultLogJSON(newId, raw) {
     const upsertDoc = {
-      updateOne: {
-        filter: { _id: { $eq: `${date.week}${raw.statId}${raw.chgerId}` } },
-        update: {
-          _id: `${date.week}${raw.statId}${raw.chgerId}`,
+      insertOne: {
+        document: {
+          _id: newId,
           statId: raw.statId,
           chgerId: raw.chgerId,
-          week: date.week,
-          region,
+          week: this.#statusManager.getTime().week,
+          region: this.#region,
           logs: {
             mon: this.#defaultTimeTable,
             tue: this.#defaultTimeTable,
@@ -139,32 +144,8 @@ export default class Logger {
             sun: this.#defaultTimeTable,
           },
         },
-        upsert: true,
       },
     };
     return upsertDoc;
-  }
-
-  async addDefaultLogs() {
-    console.log(`[logger] [신규 충전소 기본 로그 추가] ${this.#currentPage} 기본 로그 데이터 추가 중 ...`.yellow);
-    await StationLogs.bulkWrite(this.#logsForBulk).then((bulkWriteOpResult) => {
-      console.log(`[logger] [신규 충전소 기본 로그 추가] ${this.#currentPage} MongoDB BULK update OK : ${this.#logsForBulk.length}`.green);
-    }).catch((err) => {
-      console.log(`>> Logs [신규 충전소 기본 로그 추가] ${this.#currentPage} BULK update error`);
-      console.log(JSON.stringify(err));
-      console.log(err);
-    });
-    return null;
-  }
-
-  async updateStat3Logs() {
-    console.log(`[logger] [사용중인 충전소 로그 업데이트] ${this.#currentPage} 사용중인 충전기 로그 업데이트 중 ...`.yellow);
-    await StationLogs.bulkWrite(this.#logsForBulk).then((bulkWriteOpResult) => {
-      console.log(`[logger] [사용중인 충전소 로그 업데이트] ${this.#currentPage} MongoDB BULK update OK : ${this.#logsForBulk.length}`.green);
-    }).catch((err) => {
-      console.log(`>> Logs [사용중인 충전소 로그 업데이트] ${this.#currentPage} BULK update error`);
-      console.log(JSON.stringify(err));
-    });
-    return null;
   }
 }
