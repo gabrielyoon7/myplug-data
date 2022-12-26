@@ -1,6 +1,7 @@
 import { Charger } from '../models/Charger.js';
 import { Station } from '../models/Station.js';
 import { chargerUpsertDoc, stationUpsertDoc } from '../utils/common.js';
+import { STATUS_TYPE } from '../utils/constants.js';
 import Logger from './Logger.js';
 
 export default class Saver {
@@ -25,12 +26,12 @@ export default class Saver {
 
   async init() {
     await this.generateDocs();
-    this.#statusManager.updateStatus(this.#region, this.#currentPage, 'saver', false);
+    this.#statusManager.updateStatus(this.#region, this.#currentPage, STATUS_TYPE.saver, false);
     await Promise.all([
       this.updateStations(),
       this.updateChargers(),
     ]);
-    this.#statusManager.updateStatus(this.#region, this.#currentPage, 'saver', true);
+    this.#statusManager.updateStatus(this.#region, this.#currentPage, STATUS_TYPE.saver, true);
     this.executeLogger();
   }
 

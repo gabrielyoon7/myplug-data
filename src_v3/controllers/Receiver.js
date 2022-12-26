@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import API from '../utils/API.js';
-import { NUM_OF_ROWS, ZCODES } from '../utils/constants.js';
+import { NUM_OF_ROWS, STATUS_TYPE, ZCODES } from '../utils/constants.js';
 import Saver from './Saver.js';
 
 export default class Receiver {
@@ -43,7 +43,7 @@ export default class Receiver {
         totalCount = header.totalCount;
         maxPage = parseInt(totalCount / NUM_OF_ROWS, 10) + 1;
         this.#statusManager.addStatus(z.region, page, maxPage, rawData.length, totalCount);
-        this.#statusManager.updateStatus(z.region, page, 'receiver', true);
+        this.#statusManager.updateStatus(z.region, page, STATUS_TYPE.receiver, true);
         /**
          * 받은 데이터를 저장하기 시작함
          * node.js 속도 향상을 위해 지역별이 아닌 페이지 단위로 저장 요청을 수행한다.

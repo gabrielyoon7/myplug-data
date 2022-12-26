@@ -1,6 +1,6 @@
 import { StationLogs } from '../models/StationLogs.js';
 import { insertDefaultLogDoc, updateUsingLogDoc } from '../utils/common.js';
-import { USING_STATUS } from '../utils/constants.js';
+import { STATUS_TYPE, USING_STATUS } from '../utils/constants.js';
 
 export default class Logger {
   #statusManager = null;
@@ -23,12 +23,12 @@ export default class Logger {
   }
 
   async init() {
-    this.#statusManager.updateStatus(this.#region, this.#currentPage, 'logger', false);
+    this.#statusManager.updateStatus(this.#region, this.#currentPage, STATUS_TYPE.logger, false);
     await this.generateInsertDocs();
     await this.insertNewLogs();
     await this.generateUpdateDocs();
     await this.updateUsingLogs();
-    this.#statusManager.updateStatus(this.#region, this.#currentPage, 'logger', true);
+    this.#statusManager.updateStatus(this.#region, this.#currentPage, STATUS_TYPE.logger, true);
   }
 
   async generateInsertDocs() {
