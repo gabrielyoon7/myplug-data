@@ -40,7 +40,8 @@ export default class StatusManager {
   }
 
   print() {
-    // console.clear();
+    console.clear();
+    console.log('--------------------------------');
     this.#statusList.sort((a, b) => a.region.localeCompare(b.region));
     // console.log(JSON.stringify(this.#statusList));
     this.#statusList.forEach((stat) => {
