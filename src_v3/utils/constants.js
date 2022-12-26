@@ -29,6 +29,14 @@ const STATUS_TYPE = Object.freeze({
   logger: 'logger',
 });
 
+const URL = Object.freeze({
+  api: 'http://apis.data.go.kr/B552584/EvCharger/getChargerInfo?',
+  serviceKey: 'serviceKey=dg8oHXO5d9HkXM00ye%2Bvpwk1w16hxVZxN9UGvCFKA8kXtHQhTb6CJebWA2WZdMszfK%2B9HgoiqEYCB%2Bze2hFWMQ%3D%3D',
+  pageNo: '&pageNo=',
+  numOfRows: '&numOfRows=',
+  zcode: '&zcode=',
+});
+
 const statusConverter = (type, status) => {
   switch (type) {
     case 'receiver':
@@ -65,8 +73,10 @@ const statusView = (stat) => {
   return text;
 };
 
-const STATUS_MESSAGE = (stat) => `[${stat.region} ${stat.currentPage}/${stat.maxPage}] ${statusView(stat)}`;
+const regionPageView = (stat) => `${stat.region} ${stat.currentPage}/${stat.maxPage}`.bgGray.bold;
+
+const STATUS_MESSAGE = (stat) => `${regionPageView(stat)}\t${statusView(stat)}\t`;
 
 export {
-  ZCODES, NUM_OF_ROWS, USING_STATUS, STATUS_TYPE, STATUS_MESSAGE,
+  ZCODES, NUM_OF_ROWS, USING_STATUS, STATUS_TYPE, URL, STATUS_MESSAGE,
 };

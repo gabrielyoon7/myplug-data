@@ -1,6 +1,8 @@
 /* eslint-disable no-await-in-loop */
 import API from '../utils/API.js';
-import { NUM_OF_ROWS, STATUS_TYPE, ZCODES } from '../utils/constants.js';
+import {
+  NUM_OF_ROWS, STATUS_TYPE, URL, ZCODES,
+} from '../utils/constants.js';
 import Saver from './Saver.js';
 
 export default class Receiver {
@@ -31,11 +33,11 @@ export default class Receiver {
         break;
       }
 
-      let url = 'http://apis.data.go.kr/B552584/EvCharger/getChargerInfo?';
-      url += 'serviceKey=dg8oHXO5d9HkXM00ye%2Bvpwk1w16hxVZxN9UGvCFKA8kXtHQhTb6CJebWA2WZdMszfK%2B9HgoiqEYCB%2Bze2hFWMQ%3D%3D'; // 고유키값 (하루에 1000번 요청 제한 있음.)
-      url += `&pageNo=${page}`; // 페이지 번호 : 페이지 번호
-      url += `&numOfRows=${NUM_OF_ROWS}`; // 한 페이지 결과 수 : 한 페이지 결과 수 (최소 10, 최대 9999)
-      url += `&zcode=${z.code}`; // 지역구분 코드 시도 코드 (행정구역코드 앞 2자리)
+      let url = URL.api;
+      url += URL.serviceKey; // 고유키값 (하루에 1000번 요청 제한 있음.)
+      url += `${URL.pageNo}${page}`; // 페이지 번호 : 페이지 번호
+      url += `${URL.numOfRows}${NUM_OF_ROWS}`; // 한 페이지 결과 수 : 한 페이지 결과 수 (최소 10, 최대 9999)
+      url += `${URL.zcode}${z.code}`; // 지역구분 코드 시도 코드 (행정구역코드 앞 2자리)
 
       const { header, item } = await API.getChargerInfo(url); // KECO API로부터 데이터 수신
       try {
