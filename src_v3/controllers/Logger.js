@@ -23,12 +23,14 @@ export default class Logger {
 
   async init() {
     this.#statusManager.updateStatus(this.#region, this.#currentPage, 'logger', false);
+    await this.generateInsertDocs();
     await this.insertNewLogs();
+    await this.generateUpdateDocs();
     await this.updateUsingLogs();
     this.#statusManager.updateStatus(this.#region, this.#currentPage, 'logger', true);
   }
 
-  async insertNewLogs() {
+  async generateInsertDocs() {
     const date = this.#statusManager.getTime();
     // console.log(`${date.week}${this.#rawData[0].statId}${this.#rawData[0].chgerId}`);
     const logs = await StationLogs.find({
@@ -51,6 +53,9 @@ export default class Logger {
       }
     });
     console.log(`[logger] ${this.#region + this.#currentPage} next logs size : ${this.#newBulkDocs.length}`);
+  }
+
+  async insertNewLogs() {
     await StationLogs.bulkWrite(this.#newBulkDocs).then((bulkWriteOpResult) => {
       console.log(`[logger] [신규 충전소 기본 로그 추가] ${this.#region + this.#currentPage} MongoDB BULK update OK : ${this.#newBulkDocs.length}`.green);
     }).catch((err) => {
@@ -60,7 +65,7 @@ export default class Logger {
     });
   }
 
-  async updateUsingLogs() {
+  async generateUpdateDocs() {
     const date = this.#statusManager.getTime();
     this.#rawData.filter((data) => data.stat === '3').forEach((raw) => {
       const logId = `${date.week}${raw.statId}${raw.chgerId}`;
@@ -69,6 +74,9 @@ export default class Logger {
       );
     });
     console.log(`${this.#region + this.#currentPage} 사용중인 충전기 수 : ${this.#usingBulkDocs.length}`);
+  }
+
+  async updateUsingLogs() {
     await StationLogs.bulkWrite(this.#usingBulkDocs).then((bulkWriteOpResult) => {
       console.log(`[logger] [사용중인 충전소 로그 업데이트] ${this.#region + this.#currentPage} MongoDB BULK update OK : ${this.#usingBulkDocs.length}`.green);
     }).catch((err) => {
