@@ -1,5 +1,6 @@
 import { StationLogs } from '../models/StationLogs.js';
 import { insertDefaultLogDoc, updateUsingLogDoc } from '../utils/common.js';
+import { USING_STATUS } from '../utils/constants.js';
 
 export default class Logger {
   #statusManager = null;
@@ -67,7 +68,7 @@ export default class Logger {
 
   async generateUpdateDocs() {
     const date = this.#statusManager.getTime();
-    this.#rawData.filter((data) => data.stat === '3').forEach((raw) => {
+    this.#rawData.filter((data) => data.stat === USING_STATUS).forEach((raw) => {
       const logId = `${date.week}${raw.statId}${raw.chgerId}`;
       this.#usingBulkDocs.push(
         updateUsingLogDoc(this.#statusManager.getTime(), logId),

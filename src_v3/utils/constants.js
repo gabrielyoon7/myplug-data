@@ -21,6 +21,7 @@ const ZCODES = [
 ];
 
 const NUM_OF_ROWS = 9999; // 한번에 최대 몇개 데이터를 처리할건지 결정하는 부분. (max : 9999)
+const USING_STATUS = '3';
 
 const statusConverter = (type, status) => {
   switch (type) {
@@ -58,6 +59,8 @@ const statusView = (stat) => {
   return text;
 };
 
-const STATUS_MESSAGE = (stat) => `[${stat.region} ${stat.currentPage}/${stat.maxPage}] : ${statusView(stat)}`;
+const STATUS_MESSAGE = (stat) => `[${stat.region} ${stat.currentPage}/${stat.maxPage}] ${statusView(stat)}`;
 
-export { ZCODES, NUM_OF_ROWS, STATUS_MESSAGE };
+export {
+  ZCODES, NUM_OF_ROWS, USING_STATUS, STATUS_MESSAGE,
+};
